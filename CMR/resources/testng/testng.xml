@@ -11,13 +11,17 @@
 		<classes>
 			<class name="info.novatec.inspectit.cmr.dao.impl.TimerDataAggregatorTest" />
 			<class name="info.novatec.inspectit.cmr.dao.impl.PlatformIdentDaoTest" />
+			<class name="info.novatec.inspectit.cmr.dao.impl.UserDaoTest" />
+			<class name="info.novatec.inspectit.cmr.dao.impl.RoleDaoTest" />
+			<class name="info.novatec.inspectit.cmr.dao.impl.PermissionDaoTest" />
 		</classes>
 	</test>
 	<test name="Service">
 		<classes>
 			<class name="info.novatec.inspectit.cmr.service.RegistrationServiceTest" />
 			<class name="info.novatec.inspectit.cmr.service.AgentStorageServiceTest" />
-			<class name="info.novatec.inspectit.cmr.service.GlobalDataAccessServiceTest" />
+			<class
+				name="info.novatec.inspectit.cmr.service.GlobalDataAccessServiceTest" />
 		</classes>
 	</test>
 	<test name="Util">
@@ -29,18 +33,21 @@
 	<test name="Properties">
 		<classes>
 			<class name="info.novatec.inspectit.cmr.property.PropertyManagerTest" />
-			<class name="info.novatec.inspectit.cmr.property.PropertyUpdateExecutorTest" />
+			<class
+				name="info.novatec.inspectit.cmr.property.PropertyUpdateExecutorTest" />
 			<class name="info.novatec.inspectit.cmr.property.PropertyIntegrationTest" />
 		</classes>
 	</test>
 	<test name="Serializer">
 		<classes>
-			<class name="info.novatec.inspectit.storage.serializer.impl.HibernateSerializerTest" />
+			<class
+				name="info.novatec.inspectit.storage.serializer.impl.HibernateSerializerTest" />
 		</classes>
 	</test>
 	<test name="CmrProcessors">
 		<classes>
-			<class name="info.novatec.inspectit.cmr.processor.impl.CmrDataProcessorsTest" />
+			<class
+				name="info.novatec.inspectit.cmr.processor.impl.CmrDataProcessorsTest" />
 		</classes>
 	</test>
 	<test name="Storage">
@@ -48,19 +55,22 @@
 			<class name="info.novatec.inspectit.storage.StorageIntegrationTest" />
 			<class name="info.novatec.inspectit.cmr.storage.CmrStorageManagerTest" />
 			<class name="info.novatec.inspectit.cmr.storage.CmrStorageRecorderTest" />
-			<class name="info.novatec.inspectit.cmr.service.rest.StorageRestfulServiceTest" />
+			<class
+				name="info.novatec.inspectit.cmr.service.rest.StorageRestfulServiceTest" />
 		</classes>
 	</test>
 	<test name="AOP">
 		<classes>
-			<class name="info.novatec.inspectit.cmr.spring.aop.ExceptionInterceptorTest" />
+			<class
+				name="info.novatec.inspectit.cmr.spring.aop.ExceptionInterceptorTest" />
 		</classes>
 	</test>
 	<test name="CI">
 		<classes>
-			<class name="info.novatec.inspectit.cmr.ci.ConfigurationInterfaceManagerTest" />
+			<class
+				name="info.novatec.inspectit.cmr.ci.ConfigurationInterfaceManagerTest" />
 		</classes>
-	</test>	
+	</test>
 	<test name="Communication">
 		<classes>
 			<class name="info.novatec.inspectit.cmr.rmi.KryoNetIntegrationTest" />

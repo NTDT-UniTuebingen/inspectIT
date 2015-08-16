@@ -14,6 +14,7 @@ import info.novatec.inspectit.cmr.service.IStorageService;
 import info.novatec.inspectit.cmr.service.ITimerDataAccessService;
 import info.novatec.inspectit.cmr.service.cache.CachedDataService;
 import info.novatec.inspectit.rcp.InspectIT;
+import info.novatec.inspectit.rcp.preferences.PreferencesUtils;
 import info.novatec.inspectit.rcp.provider.ICmrRepositoryProvider;
 import info.novatec.inspectit.rcp.repository.service.RefreshEditorsCachedDataService;
 import info.novatec.inspectit.rcp.repository.service.cmr.CmrServiceProvider;
@@ -321,23 +322,6 @@ public class CmrRepositoryDefinition implements RepositoryDefinition, ICmrReposi
 	@Override
 	public IGlobalDataAccessService getGlobalDataAccessService() {
 		return globalDataAccessService;
-	}
-
-	/**
-	 * Gets {@link #configurationInterfaceService}.
-	 * 
-	 * @return {@link #configurationInterfaceService}
-	 */
-	public IConfigurationInterfaceService getConfigurationInterfaceService() {
-		return configurationInterfaceService;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IJmxDataAccessService getJmxDataAccessService() {
-		return jmxDataAccessService;
 	}
 
 	/**

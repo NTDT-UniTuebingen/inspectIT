@@ -662,6 +662,9 @@
                         property="info.novatec.inspectit.storageState"
                         value="OPENED">
                   </test>
+                  <test
+                        property="info.novatec.inspectit.cmrStoragePermission">
+                  </test>
                </iterate>
             </and>
          </activeWhen>
@@ -1006,6 +1009,9 @@
                   <instanceof
                         value="info.novatec.inspectit.rcp.provider.IStorageDataProvider">
                   </instanceof>
+                  <test
+                        property="info.novatec.inspectit.cmrStoragePermission">
+                  </test>
                </iterate>
             </and>
          </activeWhen>
@@ -2880,6 +2886,105 @@
                commandId="org.eclipse.ui.edit.delete"
                label="Delete Agent"
                style="push">
+         </command>
+          <separator
+               name="info.novatec.inspectit.rcp.repositoryManagerToolbar.separator4"
+               visible="true">
+         </separator>
+         <command
+               commandId="info.novatec.inspectit.rcp.commands.cmrLogin"
+               icon="icons/fugue/key-solid.png"
+               label="CMR Login"
+               style="push">
+          <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="info.novatec.inspectit.rcp.provider.ICmrRepositoryProvider">
+                        </instanceof>
+                        <instanceof
+                              value="info.novatec.inspectit.rcp.provider.ICmrRepositoryAndAgentProvider">
+                        </instanceof>
+                     </or>
+                     <test
+                           property="info.novatec.inspectit.onlineStatus"
+                           value="ONLINE">
+                     </test>
+                     <test
+                           property="info.novatec.inspectit.cmrLoginStatus"
+                           value="LOGGEDOUT">
+                     </test>
+                  </iterate>
+               </and>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="info.novatec.inspectit.rcp.commands.cmrLogout"
+               icon="icons/fugue/key-solid.png"
+               label="CMR Logout"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="info.novatec.inspectit.rcp.provider.ICmrRepositoryProvider">
+                        </instanceof>
+                        <instanceof
+                              value="info.novatec.inspectit.rcp.provider.ICmrRepositoryAndAgentProvider">
+                        </instanceof>
+                     </or>
+                     <test
+                           property="info.novatec.inspectit.onlineStatus"
+                           value="ONLINE">
+                     </test>
+                     <test
+                           property="info.novatec.inspectit.cmrLoginStatus"
+                           value="LOGGEDIN">
+                     </test>
+                  </iterate>
+               </and>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="info.novatec.inspectit.rcp.commands.cmrAdministration"
+               icon="icons/fugue/gear--pencil.png"
+               label="CMR Administration"
+               style="push">
+               <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="info.novatec.inspectit.rcp.provider.ICmrRepositoryProvider">
+                        </instanceof>
+                        <instanceof
+                              value="info.novatec.inspectit.rcp.provider.ICmrRepositoryAndAgentProvider">
+                        </instanceof>
+                     </or>
+                     <test
+                           property="info.novatec.inspectit.onlineStatus"
+                           value="ONLINE">
+                     </test>
+                     <test
+                           property="info.novatec.inspectit.cmrAdministrationPermission">
+                     </test>
+                  </iterate>
+               </and>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
