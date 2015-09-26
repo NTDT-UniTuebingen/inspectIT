@@ -7,6 +7,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 import info.novatec.inspectit.rcp.wizard.page.CmrLoginWizardPage;
+import info.novatec.inspectit.security.SecurityFactory;
 
 /**
  * Wizard for logging into a CMR.
@@ -46,12 +47,13 @@ public class CmrLoginWizard extends Wizard implements INewWizard {
 	}
 
 	/**
-	 * {@inheritDoc} This method needs to be edited as soon as it is possible to connect to the CMR
-	 * database.
+	 * {@inheritDoc} Calls SecurityFactory for further authentication.
+	 * 
 	 */
 	@Override
 	public boolean performFinish() {
-		MessageDialog.openError(null, "Sorry", "Login is not yet possible");
+		SecurityFactory.startSecurityFactory(cmrLoginWizardPage.getMail(), cmrLoginWizardPage.getPW());
+		
 		
 		return false;
 	}
