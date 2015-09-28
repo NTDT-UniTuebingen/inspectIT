@@ -53,8 +53,6 @@ public class CmrLoginWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		SecurityFactory.startSecurityFactory(cmrLoginWizardPage.getMail(), cmrLoginWizardPage.getPW());
-		
-		
 		return false;
 	}
 
