@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Listener;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 
 /**
  * Wizard Page for logging into a CMR.
@@ -140,6 +141,24 @@ public class CmrLoginWizardPage extends WizardPage {
 	private void resetPasswordDialog(Shell parentShell) {
 		forgotPasswordDialog = new ForgotPasswordDialog(parentShell);
 		forgotPasswordDialog.open();
+	}
+	
+	/**
+	 * Hashed getter for mail.
+	 * @return mail
+	 */
+	public Sha256Hash getMail() {
+		return new Sha256Hash(mailBox.getText(), "salt", 1);
+		//TODO: Change salt
+	}
+	
+	/**
+	 * Hashed getter for password.
+	 * @return password
+	 */
+	public Sha256Hash getPW() {
+		return new Sha256Hash(passwordBox.getText(), "salt", 1);
+		//TODO: Change salt
 	}
 
 }
