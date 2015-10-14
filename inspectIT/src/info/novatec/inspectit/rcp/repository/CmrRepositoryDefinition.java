@@ -16,6 +16,7 @@ import info.novatec.inspectit.rcp.InspectIT;
 import info.novatec.inspectit.rcp.provider.ICmrRepositoryProvider;
 import info.novatec.inspectit.rcp.repository.service.RefreshEditorsCachedDataService;
 import info.novatec.inspectit.rcp.repository.service.cmr.CmrServiceProvider;
+import info.novatec.inspectit.rcp.security.CmrSecurityManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -194,12 +195,19 @@ public class CmrRepositoryDefinition implements RepositoryDefinition, ICmrReposi
 	/**
 	* The security service.
 	*/
-	 private ISecurityService securityService;
+	private ISecurityService securityService;
+	
+	/**
+	 * The security manager.
+	 */
+	private CmrSecurityManager securityManager;
 
 	/**
 	 * CMR repository change listeners.
 	 */
 	private List<CmrRepositoryChangeListener> cmrRepositoryChangeListeners = new ArrayList<CmrRepositoryChangeListener>(1);
+
+	
 
 	/**
 	 * Calls default constructor with name 'Undefined'.
@@ -240,7 +248,9 @@ public class CmrRepositoryDefinition implements RepositoryDefinition, ICmrReposi
 		timerDataAccessService = cmrServiceProvider.getTimerDataAccessService(this);
 		globalDataAccessService = cmrServiceProvider.getGlobalDataAccessService(this);
 		storageService = cmrServiceProvider.getStorageService(this);
+		
 		securityService = cmrServiceProvider.getSecurityService(this);
+		securityManager = new CmrSecurityManager(this.getSecurityService());
 
 		cachedDataService = new RefreshEditorsCachedDataService(globalDataAccessService, this);
 	}
@@ -313,13 +323,6 @@ public class CmrRepositoryDefinition implements RepositoryDefinition, ICmrReposi
 	@Override
 	public IGlobalDataAccessService getGlobalDataAccessService() {
 		return globalDataAccessService;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public ISecurityService getSecurityService() {
-		return securityService;
 	}
 
 	/**
@@ -548,6 +551,18 @@ public class CmrRepositoryDefinition implements RepositoryDefinition, ICmrReposi
 	@Override
 	public String toString() {
 		return "Repository definition :: Name=" + name + " IP=" + ip + " Port=" + port;
+	}
+
+	public CmrSecurityManager getSecurityManager() {
+		return securityManager;
+	}
+
+	public void setSecurityManager(CmrSecurityManager securityManager) {
+		this.securityManager = securityManager;
+	}
+
+	public ISecurityService getSecurityService() {
+		return securityService;
 	}
 
 }
