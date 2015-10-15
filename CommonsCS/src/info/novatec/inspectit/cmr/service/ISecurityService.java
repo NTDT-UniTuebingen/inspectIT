@@ -14,5 +14,7 @@ public interface ISecurityService {
 	 * @return a message.
 	 */
 	String getMessage();
+	
+
 
 }
