@@ -1,5 +1,7 @@
 package info.novatec.inspectit.cmr.service;
 
+import java.util.List;
+
 import info.novatec.inspectit.communication.data.cmr.Permission;
 import info.novatec.inspectit.communication.data.cmr.Role;
 import info.novatec.inspectit.communication.data.cmr.User;
@@ -18,7 +20,15 @@ public interface ISecurityService {
 	 * @param pw password in plain text. to be edited.
 	 * @return User by Email.
 	 */
-	User authenticate(String pw, String email);
+	List<String> authenticate(String pw, String email);
+	
+	/**
+	 * Returns a Role object with given Email.
+	 * @param email email
+	 * @return a Role object with given Email.
+	 * @throws AuthenticationException if the email was not found.
+	 */
+	Role retrieveRole(String email);
 	
 	/**
 	 * Searches for the Role matching a given ID.
