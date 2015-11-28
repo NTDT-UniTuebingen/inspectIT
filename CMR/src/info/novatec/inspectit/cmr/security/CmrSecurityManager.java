@@ -1,25 +1,21 @@
 package info.novatec.inspectit.cmr.security;
 
-//import info.novatec.inspectit.spring.logger.Log;
-
 import javax.annotation.PostConstruct;
 
-import info.novatec.inspectit.cmr.dao.UserDao;
-import info.novatec.inspectit.cmr.service.ISecurityService;
 import info.novatec.inspectit.spring.logger.Log;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.mgt.DefaultSecurityManager;
-//import org.slf4j.Logger;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * doc.
+ * Security Manager in the means of Apache Shiro.
+ * 
  * @author Andreas Herzog
- *
+ * @author Lucca Hellriegel
  */
 public class CmrSecurityManager extends DefaultSecurityManager {
 	
@@ -30,23 +26,20 @@ public class CmrSecurityManager extends DefaultSecurityManager {
 	Logger log;
 	
 	/**
-	 * doc.
+	 * Communication instance towards the database.
 	 */
 	@Autowired
 	private CmrRealm cmrRealm;
 	
-	//@Autowired
-	//private UserDao userDao;
 	/**
-	 * doc.
+	 * Constructor for the Security Manager.
+	 * @param realm Realm object for configuration of the manager.
 	 */
-	public CmrSecurityManager() { }
-//	public CmrSecurityManager(UserDao userDao) {
-//		this.userDao = userDao;
-//		this.cmrRealm = new CmrRealm(userDao);
-//		//SecurityUtils.setSecurityManager(this);
-//	}
-	
+	@Autowired	
+	public CmrSecurityManager(CmrRealm realm) {
+		super(realm);	
+	}
+
 	@Override
 	public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
 		return cmrRealm.doGetAuthenticationInfo(token);
