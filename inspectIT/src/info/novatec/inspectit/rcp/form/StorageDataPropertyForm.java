@@ -492,12 +492,13 @@ public class StorageDataPropertyForm implements ISelectionChangedListener {
 					sizeOnDisk.setText(NumberFormatter.humanReadableByteCount(storageData.getDiskSize()));
 					labelsTableViewer.setInput(storageData.getLabelList());
 					labelsTableViewer.refresh();
-					addNewLabel.setEnabled(isRemoteStorageDisplayed());
+
+					CmrRepositoryDefinition cmrRepositoryDefinition = storageDataProvider.getCmrRepositoryDefinition();
+					addNewLabel.setEnabled(isRemoteStorageDisplayed() && cmrRepositoryDefinition.getGrantedPermissions() != null && cmrRepositoryDefinition.getGrantedPermissions().contains("cmrStoragePermission"));
 
 					// depending of type enable/disable widgets
-					if (isRemoteStorageDisplayed()) {
+					if (isRemoteStorageDisplayed() && cmrRepositoryDefinition.getGrantedPermissions() != null && cmrRepositoryDefinition.getGrantedPermissions().contains("cmrStoragePermission")) {
 						// for remote storage
-						CmrRepositoryDefinition cmrRepositoryDefinition = storageDataProvider.getCmrRepositoryDefinition();
 						repository.setText(cmrRepositoryDefinition.getName() + " (" + cmrRepositoryDefinition.getIp() + ":" + cmrRepositoryDefinition.getPort() + ")");
 						state.setText(TextFormatter.getStorageStateTextualRepresentation(storageDataProvider.getStorageData().getState()));
 						Image img = ImageFormatter.getImageForStorageLeaf((StorageData) storageData);
