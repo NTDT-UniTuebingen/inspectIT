@@ -54,6 +54,9 @@ import info.novatec.inspectit.storage.serializer.schema.ClassSchemaManager;
 import info.novatec.inspectit.util.IHibernateUtil;
 import info.novatec.inspectit.util.KryoNetNetwork;
 import info.novatec.inspectit.util.TimeFrame;
+import info.novatec.inspectit.communication.data.cmr.Permission;
+import info.novatec.inspectit.communication.data.cmr.Role;
+import info.novatec.inspectit.communication.data.cmr.User;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
@@ -69,6 +72,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -86,6 +93,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.ReferenceResolver;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.BlowfishSerializer;
 import com.esotericsoftware.kryo.serializers.CollectionSerializer;
 import com.esotericsoftware.kryo.serializers.DefaultArraySerializers.LongArraySerializer;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.ClassSerializer;
@@ -101,7 +109,8 @@ import de.javakaffee.kryoserializers.SynchronizedCollectionsSerializer;
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
 
 /**
- * Implementation of the {@link ISerializer} that uses Kryo library for serializing the objects. <br>
+ * Implementation of the {@link ISerializer} that uses Kryo library for serializing the objects.
+ * <br>
  * <br>
  * <b>This class is not thread safe and should be used with special attention. The class can be used
  * only by one thread while the serialization/de-serialization process lasts.</b>
@@ -168,6 +177,37 @@ public class SerializationManager implements ISerializer, IKryoProvider, Initial
 	}
 
 	/**
+	 * @author Maximilian Rösch
+	 * 
+	 *         Method needed to generate a key for {@link BlowfishSerializer} implementations in
+	 *         this class.
+	 * 
+	 * @param algorithm
+	 * 
+	 * @return keyBytes, null
+	 */
+	private byte[] generateKey(String algorithm) {
+		KeyGenerator keyGen;
+		try {
+			keyGen = KeyGenerator.getInstance(algorithm);
+			SecretKey key = keyGen.generateKey();
+			byte[] keyBytes = key.getEncoded();
+			return keyBytes;
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * @author Maximilian Rösch
+	 * 
+	 *         Encryption key needed for {@link BlowfishSerializer} implementations in this class.
+	 */
+	// TODO dont leave it as variable, just for demonstration purpose
+	protected final byte[] keyB = generateKey("Blowfish");
+
+	/**
 	 * Registers all necessary classes to the {@link Kryo} instance;
 	 * 
 	 * ATTENTION!
@@ -193,46 +233,51 @@ public class SerializationManager implements ISerializer, IKryoProvider, Initial
 	 */
 	private void registerClasses(Kryo kryo) {
 		/** Java native classes */
-		kryo.register(Class.class, new ClassSerializer());
-		kryo.register(ArrayList.class, new HibernateAwareCollectionSerializer(hibernateUtil)); // NOPMD
-		kryo.register(CopyOnWriteArrayList.class, new CollectionSerializer());
-		kryo.register(HashSet.class, new HibernateAwareCollectionSerializer(hibernateUtil)); // NOPMD
-		kryo.register(HashMap.class, new HibernateAwareMapSerializer(hibernateUtil)); // NOPMD
-		kryo.register(ConcurrentHashMap.class, new MapSerializer());
-		kryo.register(Timestamp.class, new TimestampSerializer());
-		kryo.register(Date.class, new DateSerializer());
-		kryo.register(AtomicLong.class, new FieldSerializer<AtomicLong>(kryo, AtomicLong.class));
+		kryo.register(Class.class, new BlowfishSerializer(new ClassSerializer(), keyB));
+		kryo.register(ArrayList.class, new BlowfishSerializer(new HibernateAwareCollectionSerializer(hibernateUtil), keyB)); // NOPMD
+		kryo.register(CopyOnWriteArrayList.class, new BlowfishSerializer(new CollectionSerializer(), keyB));
+		kryo.register(HashSet.class, new BlowfishSerializer(new HibernateAwareCollectionSerializer(hibernateUtil), keyB)); // NOPMD
+		kryo.register(HashMap.class, new BlowfishSerializer(new HibernateAwareMapSerializer(hibernateUtil), keyB)); // NOPMD
+		kryo.register(ConcurrentHashMap.class, new BlowfishSerializer(new MapSerializer(), keyB));
+		kryo.register(Timestamp.class, new BlowfishSerializer(new TimestampSerializer(), keyB));
+		kryo.register(Date.class, new BlowfishSerializer(new DateSerializer(), keyB));
+		kryo.register(AtomicLong.class, new BlowfishSerializer(new FieldSerializer<AtomicLong>(kryo, AtomicLong.class), keyB));
 		/** Arrays */
-		kryo.register(long[].class, new LongArraySerializer());
+		kryo.register(long[].class, new BlowfishSerializer(new LongArraySerializer(), keyB));
 		/** inspectIT model classes */
-		kryo.register(PlatformIdent.class, new CustomCompatibleFieldSerializer<PlatformIdent>(kryo, PlatformIdent.class, schemaManager));
-		kryo.register(MethodIdent.class, new CustomCompatibleFieldSerializer<MethodIdent>(kryo, MethodIdent.class, schemaManager));
-		kryo.register(SensorTypeIdent.class, new CustomCompatibleFieldSerializer<SensorTypeIdent>(kryo, SensorTypeIdent.class, schemaManager));
-		kryo.register(MethodSensorTypeIdent.class, new CustomCompatibleFieldSerializer<MethodSensorTypeIdent>(kryo, MethodSensorTypeIdent.class, schemaManager));
-		kryo.register(PlatformSensorTypeIdent.class, new CustomCompatibleFieldSerializer<PlatformSensorTypeIdent>(kryo, PlatformSensorTypeIdent.class, schemaManager, true));
+		kryo.register(PlatformIdent.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<PlatformIdent>(kryo, PlatformIdent.class, schemaManager), keyB));
+		kryo.register(MethodIdent.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<MethodIdent>(kryo, MethodIdent.class, schemaManager), keyB));
+		kryo.register(SensorTypeIdent.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<SensorTypeIdent>(kryo, SensorTypeIdent.class, schemaManager), keyB));
+		kryo.register(MethodSensorTypeIdent.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<MethodSensorTypeIdent>(kryo, MethodSensorTypeIdent.class, schemaManager), keyB));
+		kryo.register(PlatformSensorTypeIdent.class,
+				new BlowfishSerializer(new CustomCompatibleFieldSerializer<PlatformSensorTypeIdent>(kryo, PlatformSensorTypeIdent.class, schemaManager, true), keyB));
 		/** Common data classes */
-		kryo.register(MutableInt.class, new FieldSerializer<MutableInt>(kryo, MutableInt.class));
-		kryo.register(InvocationSequenceData.class, new InvocationSequenceCustomCompatibleFieldSerializer(kryo, InvocationSequenceData.class, schemaManager));
+		kryo.register(MutableInt.class, new BlowfishSerializer(new FieldSerializer<MutableInt>(kryo, MutableInt.class), keyB));
+		kryo.register(InvocationSequenceData.class, new BlowfishSerializer(new InvocationSequenceCustomCompatibleFieldSerializer(kryo, InvocationSequenceData.class, schemaManager), keyB));
 		// TODO Check if we want for these
-		kryo.register(TimerData.class, new InvocationAwareDataSerializer<TimerData>(kryo, TimerData.class, schemaManager));
-		kryo.register(HttpTimerData.class, new InvocationAwareDataSerializer<HttpTimerData>(kryo, HttpTimerData.class, schemaManager));
-		kryo.register(SqlStatementData.class, new InvocationAwareDataSerializer<SqlStatementData>(kryo, SqlStatementData.class, schemaManager));
-		kryo.register(ExceptionSensorData.class, new InvocationAwareDataSerializer<ExceptionSensorData>(kryo, ExceptionSensorData.class, schemaManager));
-		kryo.register(ExceptionEvent.class, new EnumSerializer(ExceptionEvent.class));
-		kryo.register(ParameterContentData.class, new CustomCompatibleFieldSerializer<ParameterContentData>(kryo, ParameterContentData.class, schemaManager));
-		kryo.register(MemoryInformationData.class, new CustomCompatibleFieldSerializer<MemoryInformationData>(kryo, MemoryInformationData.class, schemaManager));
-		kryo.register(CpuInformationData.class, new CustomCompatibleFieldSerializer<CpuInformationData>(kryo, CpuInformationData.class, schemaManager));
-		kryo.register(SystemInformationData.class, new CustomCompatibleFieldSerializer<SystemInformationData>(kryo, SystemInformationData.class, schemaManager));
-		kryo.register(VmArgumentData.class, new CustomCompatibleFieldSerializer<VmArgumentData>(kryo, VmArgumentData.class, schemaManager));
-		kryo.register(ThreadInformationData.class, new CustomCompatibleFieldSerializer<ThreadInformationData>(kryo, ThreadInformationData.class, schemaManager));
-		kryo.register(RuntimeInformationData.class, new CustomCompatibleFieldSerializer<RuntimeInformationData>(kryo, RuntimeInformationData.class, schemaManager));
-		kryo.register(CompilationInformationData.class, new CustomCompatibleFieldSerializer<CompilationInformationData>(kryo, CompilationInformationData.class, schemaManager));
-		kryo.register(ClassLoadingInformationData.class, new CustomCompatibleFieldSerializer<ClassLoadingInformationData>(kryo, ClassLoadingInformationData.class, schemaManager));
-		kryo.register(ParameterContentType.class, new EnumSerializer(ParameterContentType.class));
+		kryo.register(TimerData.class, new BlowfishSerializer(new InvocationAwareDataSerializer<TimerData>(kryo, TimerData.class, schemaManager), keyB));
+		kryo.register(HttpTimerData.class, new BlowfishSerializer(new InvocationAwareDataSerializer<HttpTimerData>(kryo, HttpTimerData.class, schemaManager), keyB));
+		kryo.register(SqlStatementData.class, new BlowfishSerializer(new InvocationAwareDataSerializer<SqlStatementData>(kryo, SqlStatementData.class, schemaManager), keyB));
+		kryo.register(ExceptionSensorData.class, new BlowfishSerializer(new InvocationAwareDataSerializer<ExceptionSensorData>(kryo, ExceptionSensorData.class, schemaManager), keyB));
+		kryo.register(ExceptionEvent.class, new BlowfishSerializer(new EnumSerializer(ExceptionEvent.class), keyB));
+		kryo.register(ParameterContentData.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<ParameterContentData>(kryo, ParameterContentData.class, schemaManager), keyB));
+		kryo.register(MemoryInformationData.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<MemoryInformationData>(kryo, MemoryInformationData.class, schemaManager), keyB));
+		kryo.register(CpuInformationData.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<CpuInformationData>(kryo, CpuInformationData.class, schemaManager), keyB));
+		kryo.register(SystemInformationData.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<SystemInformationData>(kryo, SystemInformationData.class, schemaManager), keyB));
+		kryo.register(VmArgumentData.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<VmArgumentData>(kryo, VmArgumentData.class, schemaManager), keyB));
+		kryo.register(ThreadInformationData.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<ThreadInformationData>(kryo, ThreadInformationData.class, schemaManager), keyB));
+		kryo.register(RuntimeInformationData.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<RuntimeInformationData>(kryo, RuntimeInformationData.class, schemaManager), keyB));
+		kryo.register(CompilationInformationData.class,
+				new BlowfishSerializer(new CustomCompatibleFieldSerializer<CompilationInformationData>(kryo, CompilationInformationData.class, schemaManager), keyB));
+		kryo.register(ClassLoadingInformationData.class,
+				new BlowfishSerializer(new CustomCompatibleFieldSerializer<ClassLoadingInformationData>(kryo, ClassLoadingInformationData.class, schemaManager), keyB));
+		kryo.register(ParameterContentType.class, new BlowfishSerializer(new EnumSerializer(ParameterContentType.class), keyB));
 
 		// aggregation classes
-		kryo.register(AggregatedExceptionSensorData.class, new InvocationAwareDataSerializer<AggregatedExceptionSensorData>(kryo, AggregatedExceptionSensorData.class, schemaManager));
-		kryo.register(DatabaseAggregatedTimerData.class, new InvocationAwareDataSerializer<DatabaseAggregatedTimerData>(kryo, DatabaseAggregatedTimerData.class, schemaManager, true));
+		kryo.register(AggregatedExceptionSensorData.class,
+				new BlowfishSerializer(new InvocationAwareDataSerializer<AggregatedExceptionSensorData>(kryo, AggregatedExceptionSensorData.class, schemaManager), keyB));
+		kryo.register(DatabaseAggregatedTimerData.class,
+				new BlowfishSerializer(new InvocationAwareDataSerializer<DatabaseAggregatedTimerData>(kryo, DatabaseAggregatedTimerData.class, schemaManager, true), keyB));
 
 		// classes needed for the HTTP calls from the UI
 		kryo.register(RemoteInvocation.class, new FieldSerializer<RemoteInvocation>(kryo, RemoteInvocation.class));
@@ -245,64 +290,76 @@ public class SerializationManager implements ISerializer, IKryoProvider, Initial
 
 		// data classes between CMR and UI
 		// this classes can be registered with FieldSerializer since they are not saved to disk
-		kryo.register(CmrStatusData.class, new FieldSerializer<CmrStatusData>(kryo, CmrStatusData.class));
-		kryo.register(AgentStatusData.class, new FieldSerializer<AgentStatusData>(kryo, AgentStatusData.class));
-		kryo.register(AgentConnection.class, new EnumSerializer(AgentConnection.class));
+		kryo.register(CmrStatusData.class, new BlowfishSerializer(new FieldSerializer<CmrStatusData>(kryo, CmrStatusData.class), keyB));
+		kryo.register(AgentStatusData.class, new BlowfishSerializer(new FieldSerializer<AgentStatusData>(kryo, AgentStatusData.class), keyB));
+		kryo.register(AgentConnection.class, new BlowfishSerializer(new EnumSerializer(AgentConnection.class), keyB));
 
+		// TODO implement workaround for Encryption
+		// TODO @Override ?
 		// INSPECTIT-849 - Hibernate uses Arrays.asList which does not have no-arg constructor
-		kryo.register(Arrays.asList().getClass(), new CollectionSerializer() {
-			@Override
-			@SuppressWarnings("rawtypes")
+		kryo.register(Arrays.asList().getClass(), new BlowfishSerializer(new CollectionSerializer(), keyB) {
+			// @Override
+			@SuppressWarnings({ "rawtypes", "unused" })
 			protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
 				return new ArrayList<Object>();
 			}
 		});
 
 		// INSPECTIT-846
-		kryo.register(AggregatedHttpTimerData.class, new InvocationAwareDataSerializer<AggregatedHttpTimerData>(kryo, AggregatedHttpTimerData.class, schemaManager));
-		kryo.register(AggregatedSqlStatementData.class, new InvocationAwareDataSerializer<AggregatedSqlStatementData>(kryo, AggregatedSqlStatementData.class, schemaManager));
-		kryo.register(AggregatedTimerData.class, new InvocationAwareDataSerializer<AggregatedTimerData>(kryo, AggregatedTimerData.class, schemaManager));
+		kryo.register(AggregatedHttpTimerData.class, new BlowfishSerializer(new InvocationAwareDataSerializer<AggregatedHttpTimerData>(kryo, AggregatedHttpTimerData.class, schemaManager), keyB));
+		kryo.register(AggregatedSqlStatementData.class,
+				new BlowfishSerializer(new InvocationAwareDataSerializer<AggregatedSqlStatementData>(kryo, AggregatedSqlStatementData.class, schemaManager), keyB));
+		kryo.register(AggregatedTimerData.class, new BlowfishSerializer(new InvocationAwareDataSerializer<AggregatedTimerData>(kryo, AggregatedTimerData.class, schemaManager), keyB));
 
 		// added with INSPECTIT-853
-		kryo.register(MethodIdentToSensorType.class, new CustomCompatibleFieldSerializer<MethodIdentToSensorType>(kryo, MethodIdentToSensorType.class, schemaManager));
+		kryo.register(MethodIdentToSensorType.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<MethodIdentToSensorType>(kryo, MethodIdentToSensorType.class, schemaManager), keyB));
 
+		// TODO implement workaround for Encryption
 		// added with INSPECTIT-912
 		UnmodifiableCollectionsSerializer.registerSerializers(kryo);
 		SynchronizedCollectionsSerializer.registerSerializers(kryo);
 		kryo.register(StackTraceElement.class, new StackTraceElementSerializer());
 
 		// added with INSPECTIT-887
-		kryo.register(DefaultDataComparatorEnum.class, new EnumSerializer(DefaultDataComparatorEnum.class));
-		kryo.register(MethodSensorDataComparatorEnum.class, new EnumSerializer(MethodSensorDataComparatorEnum.class));
-		kryo.register(InvocationAwareDataComparatorEnum.class, new EnumSerializer(InvocationAwareDataComparatorEnum.class));
-		kryo.register(TimerDataComparatorEnum.class, new EnumSerializer(TimerDataComparatorEnum.class));
-		kryo.register(HttpTimerDataComparatorEnum.class, new EnumSerializer(HttpTimerDataComparatorEnum.class));
-		kryo.register(SqlStatementDataComparatorEnum.class, new EnumSerializer(SqlStatementDataComparatorEnum.class));
-		kryo.register(ExceptionSensorDataComparatorEnum.class, new EnumSerializer(ExceptionSensorDataComparatorEnum.class));
-		kryo.register(AggregatedExceptionSensorDataComparatorEnum.class, new EnumSerializer(AggregatedExceptionSensorDataComparatorEnum.class));
-		kryo.register(InvocationAwareDataComparatorEnum.class, new EnumSerializer(InvocationAwareDataComparatorEnum.class));
-		kryo.register(ResultComparator.class, new FieldSerializer<ResultComparator<?>>(kryo, ResultComparator.class));
+		kryo.register(DefaultDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(DefaultDataComparatorEnum.class), keyB));
+		kryo.register(MethodSensorDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(MethodSensorDataComparatorEnum.class), keyB));
+		kryo.register(InvocationAwareDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(InvocationAwareDataComparatorEnum.class), keyB));
+		kryo.register(TimerDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(TimerDataComparatorEnum.class), keyB));
+		kryo.register(HttpTimerDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(HttpTimerDataComparatorEnum.class), keyB));
+		kryo.register(SqlStatementDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(SqlStatementDataComparatorEnum.class), keyB));
+		kryo.register(ExceptionSensorDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(ExceptionSensorDataComparatorEnum.class), keyB));
+		kryo.register(AggregatedExceptionSensorDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(AggregatedExceptionSensorDataComparatorEnum.class), keyB));
+		kryo.register(InvocationAwareDataComparatorEnum.class, new BlowfishSerializer(new EnumSerializer(InvocationAwareDataComparatorEnum.class), keyB));
+		kryo.register(ResultComparator.class, new BlowfishSerializer(new FieldSerializer<ResultComparator<?>>(kryo, ResultComparator.class), keyB));
 
 		// added with INSPECTIT-950
-		kryo.register(TimeFrame.class, new CustomCompatibleFieldSerializer<TimeFrame>(kryo, TimeFrame.class, schemaManager));
+		kryo.register(TimeFrame.class, new BlowfishSerializer(new CustomCompatibleFieldSerializer<TimeFrame>(kryo, TimeFrame.class, schemaManager), keyB));
 
+		// TODO implement workaround for Encryption
 		// added with INSPECTIT-480
 		// needed for KryoNet
 		kryoNetNetwork.register(kryo);
 
 		// added with INSPECTIT-632
-		kryo.register(BusinessException.class, new FieldSerializer<BusinessException>(kryo, BusinessException.class));
-		kryo.register(TechnicalException.class, new FieldSerializer<TechnicalException>(kryo, TechnicalException.class));
-		kryo.register(RemoteException.class, new FieldSerializer<RemoteException>(kryo, RemoteException.class));
-		kryo.register(StorageErrorCodeEnum.class, new EnumSerializer(StorageErrorCodeEnum.class));
-		kryo.register(AgentManagementErrorCodeEnum.class, new EnumSerializer(AgentManagementErrorCodeEnum.class));
+		kryo.register(BusinessException.class, new BlowfishSerializer(new FieldSerializer<BusinessException>(kryo, BusinessException.class), keyB));
+		kryo.register(TechnicalException.class, new BlowfishSerializer(new FieldSerializer<TechnicalException>(kryo, TechnicalException.class), keyB));
+		kryo.register(RemoteException.class, new BlowfishSerializer(new FieldSerializer<RemoteException>(kryo, RemoteException.class), keyB));
+		kryo.register(StorageErrorCodeEnum.class, new BlowfishSerializer(new EnumSerializer(StorageErrorCodeEnum.class), keyB));
+		kryo.register(AgentManagementErrorCodeEnum.class, new BlowfishSerializer(new EnumSerializer(AgentManagementErrorCodeEnum.class), keyB));
+
+		// added with INSPECTIT-AAExtension
+		kryo.register(Permission.class, new BlowfishSerializer(new FieldSerializer<Permission>(kryo, Permission.class), keyB));
+		kryo.register(Role.class, new BlowfishSerializer(new FieldSerializer<Role>(kryo, Role.class), keyB));
+		kryo.register(User.class, new BlowfishSerializer(new FieldSerializer<User>(kryo, User.class), keyB));
+
+		// TODO implement workaround for Encryption
 		kryo.register(InvocationTargetException.class, new FieldSerializer<InvocationTargetException>(kryo, InvocationTargetException.class) {
 			@Override
 			protected InvocationTargetException create(Kryo kryo, Input input, Class<InvocationTargetException> type) {
 				return new InvocationTargetException(null);
 			}
 		});
-				
+
 	}
 
 	/**
