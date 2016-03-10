@@ -41,11 +41,14 @@ public class SecurityInitialization {
 	 */
 	public void start() {
 		if (permissionDao.loadAll().isEmpty()) {
+
 			Permission cmrRecordingPermission = new Permission("cmrRecordingPermission", "Permission start recording from Agent");
 			Permission cmrShutdownAndRestartPermission = new Permission("cmrShutdownAndRestartPermission", "Permission for shuting down and restarting the CMR");
 			Permission cmrDeleteAgentPermission = new Permission("cmrDeleteAgentPermission", "Permission for deleting Agent");
 			Permission cmrStoragePermission = new Permission("cmrStoragePermission", "Permission for accessing basic storage options");
 			Permission cmrAdministrationPermission = new Permission("cmrAdministrationPermission", "Permission for accessing the CMR Administration");
+			Permission cmrLookAtAgentsPermission = new Permission("cmrLookAtAgentsPermission", "General permission to look at agents.");
+
 			
 			//Transfers permissions to database.
 			permissionDao.saveOrUpdate(cmrRecordingPermission);
@@ -56,8 +59,8 @@ public class SecurityInitialization {
 		
 			//Predefined roles
 			Role guestRole = new Role("guestRole", new ArrayList<Permission>());
-			Role restrictedRole = new Role("restrictedRole", Arrays.asList(cmrRecordingPermission, cmrStoragePermission));
-			Role adminRole = new Role("adminRole", Arrays.asList(cmrRecordingPermission, cmrStoragePermission, cmrDeleteAgentPermission, cmrShutdownAndRestartPermission, cmrAdministrationPermission));
+			Role restrictedRole = new Role("restrictedRole", Arrays.asList(cmrRecordingPermission, cmrStoragePermission, cmrLookAtAgentsPermission));
+			Role adminRole = new Role("adminRole", Arrays.asList(cmrRecordingPermission, cmrStoragePermission, cmrDeleteAgentPermission, cmrShutdownAndRestartPermission, cmrAdministrationPermission, cmrLookAtAgentsPermission));
 			
 			//Transfers roles to database.
 			roleDao.saveOrUpdate(guestRole);

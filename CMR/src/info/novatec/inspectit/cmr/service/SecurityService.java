@@ -379,5 +379,4 @@ public class SecurityService implements ISecurityService {
 	}
 
 
-		// TODO Make more methods available for the administrator module...
 }
