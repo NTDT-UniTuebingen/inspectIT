@@ -1,7 +1,6 @@
 package info.novatec.inspectit.agent.sensor.method.jdbc;
 
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-
 import info.novatec.inspectit.agent.AbstractLogSupport;
 import info.novatec.inspectit.agent.core.IIdManager;
 import info.novatec.inspectit.util.Timer;
@@ -32,7 +31,7 @@ public class StatementSensorTest extends AbstractLogSupport {
 	@Mock
 	StatementReflectionCache statementReflectionCache;
 
-	@BeforeMethod
+	@BeforeMethod(dependsOnMethods = { "initMocks" })
 	public void initTestClass() {
 	}
 

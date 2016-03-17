@@ -4,28 +4,31 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-
-import info.novatec.inspectit.agent.TestBase;
+import info.novatec.inspectit.agent.MockInit;
 import info.novatec.inspectit.agent.core.ICoreService;
 import info.novatec.inspectit.agent.core.ListListener;
-import info.novatec.inspectit.communication.DefaultData;
+import info.novatec.inspectit.agent.sending.ISendingStrategy;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("PMD")
-public class ListSizeStrategyTest extends TestBase {
+public class ListSizeStrategyTest extends MockInit {
 
 	@Mock
 	private ICoreService coreService;
 
-	@InjectMocks
-	private ListSizeStrategy sendingStrategy;
+	private ISendingStrategy sendingStrategy;
+
+	@BeforeMethod
+	public void initTestClass() {
+		sendingStrategy = new ListSizeStrategy();
+	}
 
 	@Test
 	public void startStop() {
@@ -42,9 +45,9 @@ public class ListSizeStrategyTest extends TestBase {
 	@Test
 	public void contentChanged() {
 		sendingStrategy.start(coreService);
-		List<List<DefaultData>> list = mock(List.class);
+		List<Object> list = mock(List.class);
 
-		sendingStrategy.contentChanged(list);
+		((ListListener<Object>) sendingStrategy).contentChanged(list);
 
 		verify(list).size();
 
@@ -55,10 +58,10 @@ public class ListSizeStrategyTest extends TestBase {
 	@Test
 	public void fireSending() {
 		sendingStrategy.start(coreService);
-		List<List<DefaultData>> list = mock(List.class);
+		List<Object> list = mock(List.class);
 		when(list.size()).thenReturn(11);
 
-		sendingStrategy.contentChanged(list);
+		((ListListener<Object>) sendingStrategy).contentChanged(list);
 
 		verify(coreService).sendData();
 	}
@@ -70,10 +73,10 @@ public class ListSizeStrategyTest extends TestBase {
 		settings.put("size", "3");
 		sendingStrategy.init(settings);
 		sendingStrategy.start(coreService);
-		List<List<DefaultData>> list = mock(List.class);
+		List<Object> list = mock(List.class);
 		when(list.size()).thenReturn(5);
 
-		sendingStrategy.contentChanged(list);
+		((ListListener<Object>) sendingStrategy).contentChanged(list);
 
 		verify(coreService).sendData();
 	}

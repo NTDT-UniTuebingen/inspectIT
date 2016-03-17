@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
-
 import info.novatec.inspectit.agent.AbstractLogSupport;
 import info.novatec.inspectit.agent.sensor.platform.provider.OperatingSystemInfoProvider;
 import info.novatec.inspectit.agent.sensor.platform.provider.sun.SunOperatingSystemInfoProvider;
@@ -29,7 +28,7 @@ public class CpuUsageCalculatorTest extends AbstractLogSupport {
 
 	private OperatingSystemInfoProvider wrapper;
 
-	@BeforeMethod
+	@BeforeMethod(dependsOnMethods = { "initMocks" })
 	public void initTestClass() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 		wrapper = new SunOperatingSystemInfoProvider();
 

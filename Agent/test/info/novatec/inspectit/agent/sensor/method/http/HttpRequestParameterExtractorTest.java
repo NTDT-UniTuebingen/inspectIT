@@ -35,7 +35,7 @@ public class HttpRequestParameterExtractorTest extends AbstractLogSupport {
 	@Mock
 	private HttpServletRequest httpServletRequest;
 
-	@BeforeMethod
+	@BeforeMethod(dependsOnMethods = { "initMocks" })
 	public void initTestClass() {
 		extractor = new HttpRequestParameterExtractor(new StringConstraint(Collections.<String, Object> singletonMap("stringLength", "20")));
 	}

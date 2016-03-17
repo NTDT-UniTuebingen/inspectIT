@@ -38,7 +38,7 @@ public class PreparedStatementParameterHookTest extends AbstractLogSupport {
 	/**
 	 * Initializes the test class.
 	 */
-	@BeforeMethod
+	@BeforeMethod(dependsOnMethods = { "initMocks" })
 	public void initTestClass() {
 		preparedStatementParameterHook = new PreparedStatementParameterHook(statementStorage);
 	}
@@ -199,8 +199,7 @@ public class PreparedStatementParameterHookTest extends AbstractLogSupport {
 	 */
 	@DataProvider(name = "methodsWithBigDataStructures")
 	public Object[][] methodsWithBigDataStructures() {
-		return new Object[][] { { "setAsciiStream" }, { "setBinaryStream" }, { "setBlob" }, { "setCharacterStream" }, { "setClob" }, { "setNCharacterStream" }, { "setNClob" },
-				{ "setUnicodeStream" } };
+		return new Object[][] { { "setAsciiStream" }, { "setBinaryStream" }, { "setBlob" }, { "setCharacterStream" }, { "setClob" }, { "setNCharacterStream" }, { "setNClob" }, { "setUnicodeStream" } };
 	}
 
 }

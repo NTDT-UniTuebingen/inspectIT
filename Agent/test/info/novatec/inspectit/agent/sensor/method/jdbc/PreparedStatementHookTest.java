@@ -40,7 +40,7 @@ public class PreparedStatementHookTest extends AbstractLogSupport {
 	@Mock
 	private Logger log;
 
-	@BeforeMethod
+	@BeforeMethod(dependsOnMethods = { "initMocks" })
 	public void initTestClass() {
 		Mockito.doThrow(myNoSuchElementException).when(statementStorage).addPreparedStatement(Mockito.anyObject());
 	}

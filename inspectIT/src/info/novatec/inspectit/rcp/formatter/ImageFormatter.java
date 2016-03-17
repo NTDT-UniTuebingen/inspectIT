@@ -15,7 +15,6 @@ import info.novatec.inspectit.ci.sensor.method.impl.ConnectionMetaDataSensorConf
 import info.novatec.inspectit.ci.sensor.method.impl.ConnectionSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.HttpSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.InvocationSequenceSensorConfig;
-import info.novatec.inspectit.ci.sensor.method.impl.Log4jLoggingSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.PreparedStatementParameterSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.PreparedStatementSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.StatementSensorConfig;
@@ -64,9 +63,9 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * The class provide image descriptors for the different elements.
- *
+ * 
  * @author Ivan Senic
- *
+ * 
  */
 public final class ImageFormatter {
 
@@ -88,7 +87,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns the {@link Image} for the composite that represents a label.
-	 *
+	 * 
 	 * @param labelType
 	 *            Label type.
 	 * @return {@link Image} for Composite.
@@ -99,7 +98,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns the {@link ImageDescriptor} for the composite that represents a label.
-	 *
+	 * 
 	 * @param labelType
 	 *            Label type.
 	 * @return {@link ImageDescriptor} for {@link Composite}.
@@ -110,7 +109,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns the image key for the label type.
-	 *
+	 * 
 	 * @param labelType
 	 *            Label type.
 	 * @return String that represents the image key. Will never be <code>null</code>.
@@ -152,7 +151,7 @@ public final class ImageFormatter {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param storageData
 	 *            {@link StorageData} to get picture for.
 	 * @return Returns the {@link Image} for the storage, based on the
@@ -173,7 +172,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns image based on the CMR repository status.
-	 *
+	 * 
 	 * @param selectedCmrRepositoryDefinition
 	 *            {@link CmrRepositoryDefinition}.
 	 * @param small
@@ -204,7 +203,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns image for the title box.
-	 *
+	 * 
 	 * @param storageRepositoryDefinition
 	 *            {@link StorageRepositoryDefinition}
 	 * @return Image for the title box.
@@ -223,7 +222,7 @@ public final class ImageFormatter {
 	/**
 	 * Returns image that represents the {@link WritingStatus} or null if the writing status passed
 	 * is null.
-	 *
+	 * 
 	 * @param status
 	 *            Image for {@link WritingStatus}.
 	 * @return Returns image that represents the {@link WritingStatus} or null if the writing status
@@ -248,7 +247,7 @@ public final class ImageFormatter {
 	/**
 	 * Returns overlayed icon for editors with additional {@link ImageDescriptor} depending if the
 	 * repository is CMR or Storage repository.
-	 *
+	 * 
 	 * @param original
 	 *            Original icon.
 	 * @param repositoryDefinition
@@ -273,14 +272,14 @@ public final class ImageFormatter {
 	/**
 	 * Returns the combined image for given array of descriptors. Orientation can be vertical or
 	 * horizontal.
-	 *
+	 * 
 	 * @param resourceManager
 	 *            {@link ResourceManager}.
 	 * @param orientation
 	 *            SWT#Vertical or SWT#Horizontal. Descriptors will be passed in given order.
 	 * @param descriptors
 	 *            Array of descriptors.
-	 *
+	 * 
 	 * @return Combined {@link Image}.
 	 */
 	public static Image getCombinedImage(ResourceManager resourceManager, int orientation, ImageDescriptor... descriptors) {
@@ -290,7 +289,7 @@ public final class ImageFormatter {
 	/**
 	 * Returns the combined image for given array of descriptors. Orientation can be vertical or
 	 * horizontal.
-	 *
+	 * 
 	 * @param resourceManager
 	 *            {@link ResourceManager}.
 	 * @param orientation
@@ -301,7 +300,7 @@ public final class ImageFormatter {
 	 *            min height of image
 	 * @param descriptors
 	 *            Array of descriptors.
-	 *
+	 * 
 	 * @return Combined {@link Image}.
 	 */
 	public static Image getCombinedImage(ResourceManager resourceManager, int orientation, int minWidth, int minHeight, ImageDescriptor... descriptors) {
@@ -312,10 +311,10 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns the image for the agent based on the last data sent date.
-	 *
+	 * 
 	 * @param agentStatusData
 	 *            {@link AgentStatusData} golding the information or null if it's not available.
-	 *
+	 * 
 	 * @return {@link Image}
 	 */
 	public static Image getAgentImage(AgentStatusData agentStatusData) {
@@ -345,7 +344,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns image for the {@link ISensorConfig}.
-	 *
+	 * 
 	 * @param sensorConfig
 	 *            {@link ISensorConfig}
 	 * @return Image or <code>null</code> if one can not be resolved for given sensor configuration.
@@ -356,7 +355,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns image for the {@link ISensorConfig} class.
-	 *
+	 * 
 	 * @param sensorClass
 	 *            {@link ISensorConfig} class.
 	 * @return Image or <code>null</code> if one can not be resolved for given sensor configuration.
@@ -380,8 +379,6 @@ public final class ImageFormatter {
 			return InspectIT.getDefault().getImage(InspectITImages.IMG_DATABASE);
 		} else if (ObjectUtils.equals(sensorClass, TimerSensorConfig.class)) {
 			return InspectIT.getDefault().getImage(InspectITImages.IMG_TIMER);
-		} else if (ObjectUtils.equals(sensorClass, Log4jLoggingSensorConfig.class)) {
-			return InspectIT.getDefault().getImage(InspectITImages.IMG_LOG);
 		} else if (ObjectUtils.equals(sensorClass, ClassLoadingSensorConfig.class)) {
 			return InspectIT.getDefault().getImage(InspectITImages.IMG_CLASS_OVERVIEW);
 		} else if (ObjectUtils.equals(sensorClass, CompilationSensorConfig.class)) {
@@ -402,7 +399,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns the image describing the method visibility of the {@link MethodSensorAssignment}.
-	 *
+	 * 
 	 * @param resourceManager
 	 *            Resource manager to create image with.
 	 * @param methodSensorAssignment
@@ -440,7 +437,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns the image describing the options of the {@link AbstractClassSensorAssignment}.
-	 *
+	 * 
 	 * @param resourceManager
 	 *            Resource manager to create image with.
 	 * @param assignment
@@ -496,7 +493,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns environment image.
-	 *
+	 * 
 	 * @param environment
 	 *            Environment to get image for.
 	 * @return Returns environment image.
@@ -507,7 +504,7 @@ public final class ImageFormatter {
 
 	/**
 	 * Returns profile image.
-	 *
+	 * 
 	 * @param profile
 	 *            Profile to get image for.
 	 * @return Returns profile image.

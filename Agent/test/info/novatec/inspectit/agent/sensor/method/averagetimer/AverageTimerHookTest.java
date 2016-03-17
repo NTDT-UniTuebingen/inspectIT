@@ -16,7 +16,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-
 import info.novatec.inspectit.agent.AbstractLogSupport;
 import info.novatec.inspectit.agent.config.IPropertyAccessor;
 import info.novatec.inspectit.agent.config.impl.RegisteredSensorConfig;
@@ -58,7 +57,7 @@ public class AverageTimerHookTest extends AbstractLogSupport {
 
 	private AverageTimerHook averageTimerHook;
 
-	@BeforeMethod
+	@BeforeMethod(dependsOnMethods = { "initMocks" })
 	public void initTestClass() {
 		averageTimerHook = new AverageTimerHook(timer, idManager, propertyAccessor, parameter);
 	}

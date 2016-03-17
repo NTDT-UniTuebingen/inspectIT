@@ -17,7 +17,7 @@ import ch.qos.logback.core.util.StatusPrinter;
  * @author Patrice Bouillet
  * 
  */
-public abstract class AbstractLogSupport extends TestBase {
+public abstract class AbstractLogSupport extends MockInit {
 
 	/**
 	 * Init logging.

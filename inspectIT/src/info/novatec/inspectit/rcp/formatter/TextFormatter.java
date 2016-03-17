@@ -1,13 +1,13 @@
 package info.novatec.inspectit.rcp.formatter;
 
 import info.novatec.inspectit.ci.assignment.impl.MethodSensorAssignment;
+import info.novatec.inspectit.cmr.model.JmxDefinitionDataIdent;
 import info.novatec.inspectit.ci.sensor.ISensorConfig;
 import info.novatec.inspectit.ci.sensor.exception.impl.ExceptionSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.ConnectionMetaDataSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.ConnectionSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.HttpSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.InvocationSequenceSensorConfig;
-import info.novatec.inspectit.ci.sensor.method.impl.Log4jLoggingSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.PreparedStatementParameterSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.PreparedStatementSensorConfig;
 import info.novatec.inspectit.ci.sensor.method.impl.StatementSensorConfig;
@@ -19,7 +19,6 @@ import info.novatec.inspectit.ci.sensor.platform.impl.MemorySensorConfig;
 import info.novatec.inspectit.ci.sensor.platform.impl.RuntimeSensorConfig;
 import info.novatec.inspectit.ci.sensor.platform.impl.SystemSensorConfig;
 import info.novatec.inspectit.ci.sensor.platform.impl.ThreadSensorConfig;
-import info.novatec.inspectit.cmr.model.JmxDefinitionDataIdent;
 import info.novatec.inspectit.cmr.model.MethodIdent;
 import info.novatec.inspectit.cmr.model.PlatformIdent;
 import info.novatec.inspectit.communication.data.ExceptionSensorData;
@@ -71,7 +70,7 @@ import org.eclipse.swt.graphics.TextStyle;
 /**
  * This class provides some static methods to create some common {@link String} and
  * {@link StyledString} objects.
- *
+ * 
  * @author Patrice Bouillet
  * @author Stefan Siegl
  * @author Ivan Senic
@@ -109,7 +108,7 @@ public final class TextFormatter {
 	 * Returns a Styled String out of the {@link MethodIdent} objects which looks like:
 	 * 'name'('parameter') - 'package'.'class'. Additionally, as this returns a {@link StyledString}
 	 * , the last part is colored.
-	 *
+	 * 
 	 * @param methodIdent
 	 *            The object which contains the information to create the styled method string.
 	 * @return The created styled method string.
@@ -132,7 +131,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns a method string which is appended by the parameters.
-	 *
+	 * 
 	 * @param methodIdent
 	 *            The object which contains the information to create the styled method string.
 	 * @return The created method + parameters string.
@@ -142,7 +141,7 @@ public final class TextFormatter {
 		String parameterText = "";
 		if (null != methodIdent.getParameters()) {
 			List<String> parameterList = new ArrayList<String>();
-			for (String parameter : methodIdent.getParameters()) {
+			for (String parameter : (List<String>) methodIdent.getParameters()) {
 				String[] split = parameter.split("\\.");
 				parameterList.add(split[split.length - 1]);
 			}
@@ -161,7 +160,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns a method string which is appended by the parameters.
-	 *
+	 * 
 	 * @param methodSensorAssignment
 	 *            {@link MethodSensorAssignment}
 	 * @return The created method + parameters string.
@@ -198,7 +197,7 @@ public final class TextFormatter {
 	/**
 	 * Returns a String out of the {@link MethodIdent} objects which looks like: 'name'('parameter')
 	 * - 'package'.'class'.
-	 *
+	 * 
 	 * @param methodIdent
 	 *            The object which contains the information to create the method string.
 	 * @return The created method string.
@@ -210,7 +209,7 @@ public final class TextFormatter {
 	/**
 	 * Returns a {@link String} out of the {@link JmxDefinitionDataIdent} object which looks like:
 	 * 'attributeName' - 'packagename':'typeName'.
-	 *
+	 * 
 	 * @param jmxIdent
 	 *            the object which contains the information to create the jmx string.
 	 * @return the created method string
@@ -221,7 +220,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns styled string for invocation affilliation percentage.
-	 *
+	 * 
 	 * @param percentage
 	 *            Percentage.
 	 * @param invocationsNumber
@@ -240,7 +239,7 @@ public final class TextFormatter {
 
 	/**
 	 * Creates a <code>StyledString</code> containing a warning.
-	 *
+	 * 
 	 * @return a <code>StyledString</code> containing a warning.
 	 */
 	public static StyledString getWarningSign() {
@@ -256,7 +255,7 @@ public final class TextFormatter {
 
 	/**
 	 * Get the textual representation of objects that will be displayed in the new view.
-	 *
+	 * 
 	 * @param invAwareData
 	 *            Invocation aware object to get representation for.
 	 * @param repositoryDefinition
@@ -291,7 +290,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns the styled string for the storage data and its CMR repository definition.
-	 *
+	 * 
 	 * @param storageData
 	 *            {@link StorageData}.
 	 * @param cmrRepositoryDefinition
@@ -314,7 +313,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns the styled string for the {@link LocalStorageData}.
-	 *
+	 * 
 	 * @param localStorageData
 	 *            Local storage data.
 	 * @return Styled string for nicer representation.
@@ -331,7 +330,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns {@link StyledString} for the {@link AgentLeaf}.
-	 *
+	 * 
 	 * @param agentLeaf
 	 *            {@link AgentLeaf}.
 	 * @return Returns {@link StyledString} for the {@link AgentLeaf}.
@@ -349,7 +348,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns the styled information about the agent version and connection status.
-	 *
+	 * 
 	 * @param platformIdent
 	 *            {@link PlatformIdent}
 	 * @param agentStatusData
@@ -414,7 +413,7 @@ public final class TextFormatter {
 	/**
 	 * Returns the name of the label, based on it's type. If label is <code>null</code>, string
 	 * "null" will be returned.
-	 *
+	 * 
 	 * @param label
 	 *            Label to get name for.
 	 * @return Returns the name of the label, based on it's class.
@@ -430,7 +429,7 @@ public final class TextFormatter {
 	/**
 	 * Returns the name of the label type. If label type is <code>null</code>, string "null" will be
 	 * returned.
-	 *
+	 * 
 	 * @param labelType
 	 *            Label type to get name for.
 	 * @return Returns the name of the label, based on it's class.
@@ -461,7 +460,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns the class type of the label type.
-	 *
+	 * 
 	 * @param labelType
 	 *            Label type to get name for.
 	 * @return Returns the class type of the label type.
@@ -485,7 +484,7 @@ public final class TextFormatter {
 	/**
 	 * Returns the name of the label, based on it's class. If label is <code>null</code>, string
 	 * "null" will be returned.
-	 *
+	 * 
 	 * @param label
 	 *            Label to get name for.
 	 * @param grouped
@@ -517,7 +516,7 @@ public final class TextFormatter {
 	/**
 	 * Returns text representation for the {@link WritingStatus} or empty string if status is
 	 * <code>null</code>.
-	 *
+	 * 
 	 * @param recordingWritingStatus
 	 *            Status of writing.
 	 * @return String that represent the status.
@@ -540,7 +539,7 @@ public final class TextFormatter {
 
 	/**
 	 * Description of the agent.
-	 *
+	 * 
 	 * @param agent
 	 *            {@link PlatformIdent}
 	 * @return Description of the agent.
@@ -551,7 +550,7 @@ public final class TextFormatter {
 
 	/**
 	 * Description of the agent with the connection information.
-	 *
+	 * 
 	 * @param agent
 	 *            {@link PlatformIdent}
 	 * @param agentStatusData
@@ -564,7 +563,7 @@ public final class TextFormatter {
 
 	/**
 	 * Description of the {@link CmrRepositoryDefinition}.
-	 *
+	 * 
 	 * @param cmrRepositoryDefinition
 	 *            {@link CmrRepositoryDefinition}.
 	 * @return Description in form http://ip:port
@@ -577,7 +576,7 @@ public final class TextFormatter {
 	 * Returns formated {@link String} for the {@link SqlStatementData} parameter values list.
 	 * <p>
 	 * Elements that are <code>null</code> in the list will be printed as '?'.
-	 *
+	 * 
 	 * @param parameterValues
 	 *            List of parameter values.
 	 * @return Formated string in form [param1, param2,.., paramN].
@@ -608,7 +607,7 @@ public final class TextFormatter {
 	 * The original text will be cleaned from the line breaks.
 	 * <p>
 	 * If string passed is <code>null</code>, null will be returned.
-	 *
+	 * 
 	 * @param originalText
 	 *            Original text to modify.
 	 * @return Returns text without any line breaks.
@@ -643,7 +642,7 @@ public final class TextFormatter {
 	/**
 	 * Crops the string to the maxLength. The string will have '...' appended at the end. This
 	 * method delegates to the {@link StringUtils#abbreviate(String, int)} method.
-	 *
+	 * 
 	 * @param string
 	 *            String to crop.
 	 * @param maxLength
@@ -658,7 +657,7 @@ public final class TextFormatter {
 	/**
 	 * Returns a new StyledString that contains the given text or "" if the given text was in fact
 	 * <code>null</code>.
-	 *
+	 * 
 	 * @param text
 	 *            the text to display, may be null.
 	 * @return a new StyledString that contains the given text or "" if the given text was in fact
@@ -671,7 +670,7 @@ public final class TextFormatter {
 	/**
 	 * Returns a String that contains the given text or "" if the given text was in fact
 	 * <code>null</code>.
-	 *
+	 * 
 	 * @param text
 	 *            the text to display, may be null.
 	 * @return a new StyledString that contains the given text or "" if the given text was in fact
@@ -687,7 +686,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns name of the {@link ISensorConfig}.
-	 *
+	 * 
 	 * @param sensorConfig
 	 *            {@link ISensorConfig}.
 	 * @return Name or empty string if sensor name can be resolved.
@@ -698,7 +697,7 @@ public final class TextFormatter {
 
 	/**
 	 * Returns name of the {@link ISensorConfig class}.
-	 *
+	 * 
 	 * @param sensorClass
 	 *            {@link ISensorConfig} class.
 	 * @return Name or empty string if sensor name can be resolved.
@@ -722,8 +721,6 @@ public final class TextFormatter {
 			return "JDBC Statement Sensor";
 		} else if (ObjectUtils.equals(sensorClass, TimerSensorConfig.class)) {
 			return "Timer Sensor";
-		} else if (ObjectUtils.equals(sensorClass, Log4jLoggingSensorConfig.class)) {
-			return "Logging Sensor for log4j ";
 		} else if (ObjectUtils.equals(sensorClass, ClassLoadingSensorConfig.class)) {
 			return "Class Loading Information";
 		} else if (ObjectUtils.equals(sensorClass, CompilationSensorConfig.class)) {

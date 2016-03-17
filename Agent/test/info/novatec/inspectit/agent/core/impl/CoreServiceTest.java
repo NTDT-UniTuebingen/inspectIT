@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-
 import info.novatec.inspectit.agent.AbstractLogSupport;
 import info.novatec.inspectit.agent.buffer.IBufferStrategy;
 import info.novatec.inspectit.agent.config.IConfigurationStorage;
@@ -61,7 +60,7 @@ public class CoreServiceTest extends AbstractLogSupport {
 	private CoreService coreService;
 
 	@SuppressWarnings("unchecked")
-	@BeforeMethod
+	@BeforeMethod(dependsOnMethods = { "initMocks" })
 	public void initTestClass() {
 		List<ISendingStrategy> sendingStrategies = new ArrayList<ISendingStrategy>();
 		sendingStrategies.add(sendingStrategy);
