@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +14,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 
 /**
@@ -61,7 +62,7 @@ public class Role implements Serializable {
 	 * Contains all permissions this role has.
 	 */ 
 	@ManyToMany
-	@ElementCollection(fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	//Using a List<Permission> will lead to a error with Kryo and Hibernate because Hibernate uses a PersistentBag
 	private Set<Permission> permissions;
 
