@@ -30,6 +30,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -161,6 +162,7 @@ public class StorageService implements IStorageService {
 	 */
 	@MethodLog
 	public List<StorageData> getExistingStorages() {
+		log.info("User: " + SecurityUtils.getSubject().getPrincipal());
 		return storageManager.getExistingStorages();
 	}
 
