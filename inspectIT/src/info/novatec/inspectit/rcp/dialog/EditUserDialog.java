@@ -199,6 +199,10 @@ public class EditUserDialog extends TitleAreaDialog {
 	 * Notifies that the edit button has been pressed.
 	 */
 	private void editPressed() {
+		if (userOld.getEmail().equals("guest")) {
+			MessageDialog.openWarning(null, "Warning", "This user is required for guest access and can not be edited.");
+			return;
+		}
 		long id = 0;
 		boolean passwordChanged = true;
 		int index = roles.getSelectionIndex();
